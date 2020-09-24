@@ -1,0 +1,60 @@
+---
+title: "p_8105_hw1_ep2899"
+output: github_document
+---
+
+## Problem 2
+## Load tidyverse
+```{r setup}
+library(tidyverse)
+```
+
+## Read CSV
+```{r}
+nyctransit_data = read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv")
+nyctransit_data = janitor::clean_names(nyctransit_data)
+```
+
+##clean data
+```{r}
+data_clean= select(nyctransit_data, -division, -staffing, -staff_hours, -ada_notes, -free_crossover, -north_south_street, -east_west_street, -corner, -entrance_latitude, -entrance_longitude, -station_location, -entrance_location) 
+data_clean
+```
+
+
+##convert character to logical
+```{r}
+data_clean= data_clean %>%  
+mutate(entry=ifelse(entry=="YES", TRUE, FALSE))
+```
+
+## short paragraph
+This is a csv file data of NYC transit info containing 1868 rows x 20 columns, with information regarding line, station name, station latitude, station longitude, routes served, entry, vending, entrance type, and ADA compliance 
+This data is not yet tidy
+
+##distinct
+```{r}
+data_clean %>% 
+distinct(line, station_name)%>% 
+count()
+```
+There are 465 distinct stations, by line and station_name
+
+##filter
+```{r}
+filter(data_clean, ada==TRUE) 
+```
+There are 458 stations which are ADA compliant
+
+```{r}
+data_clean= data_clean %>%  
+mutate(vending=ifelse(vending=="YES", TRUE, FALSE))
+```
+
+```{r}
+select (data_clean, entrance_type, exit_only, entry, vending) %>%  
+filter(vending==FALSE) %>% 
+  filter(entry==TRUE)
+```
+69/1868 or 3.7% of station entrances and exits without vending allow entrance  
+
