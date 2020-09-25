@@ -1,7 +1,99 @@
 ---
-title: "p_8105_hw1_ep2899"
+title: "p_8105_hw2_ep2899"
 output: github_document
 ---
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+## Problem 1
+
+Read the Mr. Trashwheel dataset.
+
+```{r}
+trashwheel_df=
+  read_xlsx("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx")
+```
+
+Specify
+```{r}
+trashwheel_df=
+read_xlsx(
+  "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
+  sheet= "Mr. Trash Wheel",
+  range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    sports_balls = round(sports_balls),
+    sports_balls = as.integer(sports_balls)
+  )
+```
+
+```{r}
+median (pull(trashwheel_df, sports_balls), na.rm=FALSE)
+```
+
+Read the precipitation data for 2018 and 2017!
+
+```{r}
+ precip_2018=
+    read_excel(
+     "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx" ,
+     sheet = "2018 Precipitation",
+     skip = 1
+    ) %>% 
+   janitor::clean_names() %>% 
+  drop_na(month) %>% 
+  mutate(year=2018) %>% 
+  relocate(year) 
+```
+
+```{r}
+colSums(precip_2018, na.rm=TRUE)
+```
+     
+ 
+```{r}
+ precip_2017=
+  read_excel(
+     "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx" ,
+     sheet = "2017 Precipitation",
+     skip = 1
+  ) %>% 
+  janitor::clean_names() %>% 
+  drop_na(month) %>% 
+  mutate(year = 2017) %>% 
+  relocate(year)
+```
+
+precip_2017=
+
+Now combine annual precipitation.
+ 
+```{r}
+precip_df=
+  bind_rows(precip_2017, precip_2018)
+```
+ 
+```{r}
+month_df=
+  tibble(
+    month = 1:12,
+    month_name = month.name
+    )
+
+precip_df=
+  bind_rows(precip_2018, precip_2017)
+
+left_join (precip_df, month_df, by= "month")
+```
+
+This dataset contains information from the Mr. Trashwheel trash collector in Baltimore, Maryland. As trash enters the inner harbor, the trashwheel collects that trash, and stores it in a dumpster. The dataset contains information on year, month, and trash collected, include some specific kinds of trash. There are a total of 'r nrows(trashwheel_df)' rows in our final dataset. Additional data sheets include month precipitation data.
+Total precipitation in 2018 is 70.33, based on code in line 55
+Median number of sports balls in a dumpster in 2017 is 8, based on code in line 36 above
 
 ## Problem 2
 ## Load tidyverse
@@ -32,7 +124,7 @@ mutate(entry=ifelse(entry=="YES", TRUE, FALSE))
 This is a csv file data of NYC transit info containing 1868 rows x 20 columns, with information regarding line, station name, station latitude, station longitude, routes served, entry, vending, entrance type, and ADA compliance 
 This data is not yet tidy
 
-##distinct
+##distinct stations
 ```{r}
 data_clean %>% 
 distinct(line, station_name)%>% 
@@ -40,12 +132,13 @@ count()
 ```
 There are 465 distinct stations, by line and station_name
 
-##filter
+##filter ADA
 ```{r}
 filter(data_clean, ada==TRUE) 
 ```
 There are 458 stations which are ADA compliant
 
+##proportion entrance
 ```{r}
 data_clean= data_clean %>%  
 mutate(vending=ifelse(vending=="YES", TRUE, FALSE))
@@ -56,5 +149,9 @@ select (data_clean, entrance_type, exit_only, entry, vending) %>%
 filter(vending==FALSE) %>% 
   filter(entry==TRUE)
 ```
-69/1868 or 3.7% of station entrances and exits without vending allow entrance  
+69/1868 or 3.7% of station entrances and exits without vending allow entrance
+
+##reformat
+
+
 
