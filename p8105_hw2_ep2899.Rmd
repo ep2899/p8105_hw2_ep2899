@@ -155,3 +155,29 @@ filter(vending==FALSE) %>%
 
 
 
+##Problem 3
+pols month
+```{r}
+  polsmonth_df = read_csv("./data/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, c("year", "month", "day")) %>% 
+  mutate(president = prez_gop + prez_dem) 
+```
+
+```{r}
+polsmonth_df_mut=
+  tibble(
+    month = 1:12,
+    month_name = month.name
+    )
+```
+
+
+snp
+```{r}
+snp_df = read_csv("./data/snp.csv") %>% 
+janitor::clean_names() %>% 
+  separate(date, c("year", "month", "day")) 
+
+```
+
