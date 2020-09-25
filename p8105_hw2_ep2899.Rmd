@@ -162,6 +162,7 @@ pols month
   janitor::clean_names() %>% 
   separate(mon, c("year", "month", "day")) %>% 
   mutate(president = prez_gop + prez_dem) 
+  select(polsmonth_df, year, month, gov_gop, sen_gop, rep_gop, gov_dem, sen_dem, rep_dem)
 ```
 
 ```{r}
