@@ -165,20 +165,23 @@ pols month
   select(polsmonth_df, year, month, gov_gop, sen_gop, rep_gop, gov_dem, sen_dem, rep_dem)
 ```
 
-```{r}
-polsmonth_df_mut=
-  tibble(
-    month = 1:12,
-    month_name = month.name
-    )
-```
-
 
 snp
 ```{r}
 snp_df = read_csv("./data/snp.csv") %>% 
 janitor::clean_names() %>% 
-  separate(date, c("year", "month", "day")) 
-
+  separate(date, c("month", "day", "year")) 
 ```
+
+unemployment
+```{r}
+unemp_data = read_csv("./data/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "rate"
+  )
+```
+
 
