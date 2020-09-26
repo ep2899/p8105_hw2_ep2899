@@ -141,7 +141,8 @@ There are 458 stations which are ADA compliant
 ##proportion entrance
 ```{r}
 data_clean= data_clean %>%  
-mutate(vending=ifelse(vending=="YES", TRUE, FALSE))
+mutate(vending=ifelse(vending=="YES", TRUE, FALSE)) %>% 
+  mutate(route8 = as.character(route8), route9 = as.character(route9), route10= as.character(route10), route11= as.character(route11))
 ```
 
 ```{r}
@@ -152,8 +153,16 @@ filter(vending==FALSE) %>%
 69/1868 or 3.7% of station entrances and exits without vending allow entrance
 
 ##reformat
-
-
+```{r}
+data_clean_tidy=
+    pivot_longer(
+      data_clean,
+      route1:route11,
+      names_to = "route_name" ,
+      names_prefix = "route" ,
+      values_to = "route_number"
+    ) 
+```
 
 ##Problem 3
 pols month
@@ -174,7 +183,7 @@ select(polsmonth_df, year, month, gov_gop, sen_gop, rep_gop, gov_dem, sen_dem, r
 ```
 
 ```{r}
-polsmonth_df_mut=
+month_df=
   tibble(
     month = 1:12,
     month_name = month.name
@@ -183,7 +192,11 @@ polsmonth_df_mut=
 
 ```{r}
 polsmonth_df_mname=
-left_join (polsmonth_df, polsmonth_df_mut, by= "month")
+left_join (polsmonth_df, month_df, by= "month")
+```
+
+```{r}
+select(polsmonth_df_mname,-month)
 ```
 
 snp
@@ -196,7 +209,7 @@ janitor::clean_names() %>%
 
 ```{r}
 snp_df_mname=
-  left_join (snp_df, polsmonth_df_mut, by= "month")
+  left_join (snp_df, month_df, by= "month")
 ```
 
 ```{r}
@@ -211,16 +224,17 @@ unemp_data = read_csv("./data/unemployment.csv") %>%
   pivot_longer(
     jan:dec,
     names_to = "month",
-    values_to = "rate"
-  )
+    values_to = "rate")
 ```
 
-
-Merge snp into pols
+snp pols merge
 ```{r}
-snp_pols=  
-left_join (snp_df_mname, polsmonth_df_mname, by= "month_name") %>% 
-janitor::clean_names()
+snp_pols_df=  
+left_join (snp_df_mname, polsmonth_df_mname, by= "month_name")
 ```
+
 
 Merge unemp
+
+
+Paragraph Description
