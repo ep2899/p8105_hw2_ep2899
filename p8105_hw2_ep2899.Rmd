@@ -243,11 +243,17 @@ left_join (snp_df_mname, polsmonth_df_mname, by= "month_name")
 ```{r}
 snp_pols_df3=
 mutate(
-    relocate(snp_pols_df, year.x, year.y))
+    relocate(snp_pols_df, year.x, year.y)) %>% 
+  pivot_longer(
+    year.x:year.y,
+    values_to = "year") 
 ```
 
 Merge unemp w snp_pols
-
+```{r}
+snp_pols_unemp_df=
+left_join (unemp_data, snp_pols_df3, by= "year")
+```
 
 Paragraph Description
 The SNP df contains the Standard & Poor’s stock market index (S&P) and closing values of the SP stock index on the month, day, and year. The polsmonth df contains the number of national politicians (democrat or republican president, governors, senators, representatives,) on the associated month, day, and year. The unemployment df contains % of unemployment from Jan to December at a given year.The resulting dataset contains 1,284, 444 rows and 12 columns in total. For every listed year and month, it indicates 
